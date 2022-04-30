@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 import mediapipe as mp
 import cv2
 import itertools
-
+import torch.nn.functional as F
 
 def _find_classes(dir):
     classes = [d.name for d in os.scandir(dir) if d.is_dir()]
@@ -35,6 +35,7 @@ class RandomDataset(torch.utils.data.IterableDataset):
         self.video_transform = video_transform
 
     def __iter__(self):
+        model = get_model(args.type) # Feature extractor model
         for i in range(self.epoch_size):
             # Get random sample
             path, target = random.choice(self.samples)
@@ -53,9 +54,19 @@ class RandomDataset(torch.utils.data.IterableDataset):
             video = torch.stack(video_frames, 0)
             if self.video_transform:
                 video = self.video_transform(video)
+            #######################    
+            """
+            Pretrain video with Resnet           
+            """
+            with torch.no_grad():
+                features = model(video)
+                if args.l2_normalize:
+                    features = F.normalize(features, dim=1)
+                features = features.cpu()
+            #######################
             output = {
                 'path': path,
-                'video': video,
+                'video': features,
                 'target': target,
                 'start': start,
                 'end': current_pts}
