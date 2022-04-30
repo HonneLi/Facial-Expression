@@ -19,11 +19,11 @@ def get_samples(root, extensions=(".mp4")):
     return make_dataset(root, class_to_idx, extensions=extensions)
   
 class RandomDataset(torch.utils.data.IterableDataset):
-    def __init__(self, root, epoch_size=None, frame_transform=None, video_transform=None, clip_len=60):
+    def __init__(self, args, epoch_size=None, frame_transform=None, video_transform=None, clip_len=60):
         super(RandomDataset).__init__()
         
         # Read all videos in the root file
-        self.samples = get_samples(root)
+        self.samples = get_samples(args.root)
 
         # Allow for temporal jittering
         if epoch_size is None:
