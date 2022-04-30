@@ -1,7 +1,7 @@
 import sys
-import torch as th
+import torch
 import torchvision.models as models
-from videocnn.models import resnext
+from videocnn.models import resnet
 from torch import nn
 
 
@@ -21,16 +21,15 @@ def get_model(args):
         model = nn.Sequential(*list(model.children())[:-2], GlobalAvgPool())
         model = model.cuda()
     else:
-        print('Loading 3D-ResneXt-101 ...')
-        model = resnext.resnet101(
-            num_classes=400,
+        print('Loading 3D-Resnet-50 ...')
+        model = resnet.resnet50(
+            num_classes=3,
             shortcut_type='B',
-            cardinality=32,
-            sample_size=112,
+            sample_size=224,
             sample_duration=16,
             last_fc=False)
         model = model.cuda()
-        model_data = th.load(args.resnext101_model_path)
+        model_data = torch.load(args.resnet50_model_path)
         model.load_state_dict(model_data)
 
     model.eval()
