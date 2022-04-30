@@ -10,7 +10,7 @@ class GlobalAvgPool(nn.Module):
         super(GlobalAvgPool, self).__init__()
 
     def forward(self, x):
-        return th.mean(x, dim=[-2, -1])
+        return torch.mean(x, dim=[-2, -1])
 
 
 def get_model(type):
