@@ -13,9 +13,9 @@ class GlobalAvgPool(nn.Module):
         return th.mean(x, dim=[-2, -1])
 
 
-def get_model(args):
-    assert args.type in ['2d', '3d']
-    if args.type == '2d':
+def get_model(type):
+    assert type in ['2d', '3d']
+    if type == '2d':
         print('Loading 2D-ResNet-152 ...')
         model = models.resnet152(pretrained=True)
         model = nn.Sequential(*list(model.children())[:-2], GlobalAvgPool())
@@ -33,5 +33,5 @@ def get_model(args):
         model.load_state_dict(model_data)
 
     model.eval()
-    print('loaded')
+    print('Feature Extactor model loaded.')
     return model
